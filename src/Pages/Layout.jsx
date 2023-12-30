@@ -1,10 +1,10 @@
 import React from 'react'
 import Navbar from '../Components/Navbar'
 
-export default function Layout({ children }) {
+export default function Layout({userRole, children }) {
     return (
         <div>
-            <Navbar />
+            <Navbar userRole={userRole}/>
             <div style={{padding:'20px'}}>{children}</div>
         </div>
     )
