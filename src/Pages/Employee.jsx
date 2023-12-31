@@ -1,11 +1,282 @@
-import React, { useState } from 'react'
-import Layout from './Layout'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import { Link, useNavigate } from 'react-router-dom'
+import Layout from './Layout';
+import { useForm } from 'react-hook-form'
 
 export default function Employee() {
-  const [profile, setProfile] = useState({role:'manager'})
-  return (
-    <Layout userRole={profile != '' ? profile.role : ''}>
-        List Here Employee
-    </Layout>
-  )
+    const navigate = useNavigate()
+    const [employeeList, setEmployeeList] = useState('')
+    const [departmentList, setDepartmentList] = useState('')
+    const [locationFilter, setLocationFilter] = useState(false)
+    const [empFilter, setEmpFilter] = useState(false)
+
+
+    function handleSession() {
+        toast.error('Session expired, please login')
+        localStorage.removeItem("accessToken");
+
+        setTimeout(() => {
+            navigate('/login')
+        }, 1000);
+    }
+
+    // Fetch all Employees
+    const handleFilter = (filter = '') => {
+        let sort = ''
+        let emp = ''
+        if (filter.sort != undefined) {
+            if (locationFilter == true) { sort = 'desc' } else { sort = 'asc' }
+        }
+        if (filter.emp != undefined) {
+            if (empFilter == true) { emp = 'desc' } else { emp = 'asc' }
+        }
+        fetchEmployees(sort, emp)
+    }
+    const fetchEmployees = (sort = '', emp = '') => {
+        const accessToken = localStorage.getItem('accessToken') ? localStorage.getItem('accessToken') : handleSession();
+        let url = '';
+        if (sort != '') {
+            url = `http://localhost:3001/user/employee${sort == '' ? "" : `?sort=${sort}`}`;
+        }
+
+        if (emp != '') {
+            url = `http://localhost:3001/user/employee?emp=${emp}`;
+        }
+
+        if (sort == '' && emp == '') {
+            url = `http://localhost:3001/user/employee`;
+        }
+        if (accessToken) {
+            axios.get(url, { headers: { Authorization: `${accessToken}` } })
+                .then(res => {
+                    setEmployeeList(res.data.employees)
+                })
+                .catch(err => {
+                    handleSession();
+                    console.log(err);
+                })
+        }
+    }
+
+    // Fetch All Departments
+    const fetchDepartments = () => {
+        const accessToken = localStorage.getItem('accessToken') ? localStorage.getItem('accessToken') : handleSession();
+        const url = "http://localhost:3001/dept";
+        if (accessToken) {
+            axios.get(url, { headers: { Authorization: `${accessToken}` } })
+                .then(res => {
+                    setDepartmentList(res.data.departments)
+                })
+                .catch(err => {
+                    handleSession();
+                    console.log(err);
+                })
+        }
+    }
+
+    const { register, handleSubmit, formState: { errors }, resetField } = useForm()
+    // Create a New Employee at manager end
+    const handleCreateEmp = async (data) => {
+        const accessToken = localStorage.getItem('accessToken') ? localStorage.getItem('accessToken') : handleSession();
+        const url = "http://localhost:3001/user/createuser";
+        axios.post(url, data, { headers: { Authorization: `${accessToken}` } })
+            .then(res => {
+                toast.success(res.data.message);
+                handleFilter();
+            })
+            .catch(err => {
+                if (err.response) {
+                    if (err.response.status == 409 || err.response.status == 400) {
+                        toast.warning(err.response.data.message);
+                    } else {
+                        toast.error(err.response.data.message);
+                    }
+                } else {
+                    handleSession();
+                    console.log(err);
+                }
+            })
+        resetField("name");
+        resetField("username");
+        resetField("email");
+        resetField("location");
+        resetField("department");
+        resetField("password");
+    }
+
+    // Delete an Employee
+    const handleDeleteEmp = async (id) => {
+        const accessToken = localStorage.getItem('accessToken') ? localStorage.getItem('accessToken') : handleSession();
+        const url = `http://localhost:3001/user/${id}`;
+        axios.delete(url, { headers: { Authorization: `${accessToken}` } })
+            .then(res => {
+                toast.success(res.data.message);
+                handleFilter();
+            })
+            .catch(err => {
+                if (err.response) {
+                    if (err.response.status == 400) {
+                        toast.warning(err.response.data.message);
+                    } else {
+                        toast.error(err.response.data.message);
+                    }
+                } else {
+                    handleSession();
+                    console.log(err);
+                }
+            })
+    }
+
+    useEffect(() => {
+        handleFilter()
+    }, [])
+
+    return (
+        <>
+            <div>
+                <h4>
+                    List Here Employee
+                </h4>
+                <input type="button" value="filter location"
+                    onClick={(e) => {
+                        setLocationFilter(!locationFilter)
+                        handleFilter({ sort: true });
+                    }} />
+                <input type="button" value="filter employee"
+                    onClick={(e) => {
+                        setEmpFilter(!empFilter)
+                        handleFilter({ emp: true });
+                    }} />
+                <button type="button" className="btn btn-primary" data-bs-toggle="modal"
+                    onClick={() => {
+                        fetchDepartments()
+                    }}
+                    data-bs-target="#createEmployeeModal">
+                    Create Employee
+                </button>
+                <table border={1} width={'100%'}>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Location</th>
+                            <th>Department</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            employeeList != ""
+                                ? employeeList.map((employee, key) => {
+                                    return (
+                                        <tr key={key}>
+                                            <td>{employee.name}</td>
+                                            <td>{employee.username}</td>
+                                            <td>{employee.email}</td>
+                                            <td>{employee.location}</td>
+                                            <td>{employee.department.name}</td>
+                                            <td>
+                                                <Link to={`/user/${employee._id}`}>Explore</Link>
+                                                <button onClick={() => {
+                                                    handleDeleteEmp(employee._id);
+                                                }}>Delete</button>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                                : <tr className='text-center'><td colSpan={6}>No Employee...</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Create Employee Modal Here */}
+            <div className="modal fade" id="createEmployeeModal" tabIndex="-1" aria-labelledby="createEmployeeModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5" id="createEmployeeModalLabel">Create New Employee</h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            <form onSubmit={handleSubmit(handleCreateEmp)}>
+                                <input type="hidden" name="role" id="role" value={'employee'} {...register("role", { required: true })} />
+                                name
+                                <br />
+                                <input
+                                    type="text"
+                                    name="name"
+                                    id="name"
+                                    {...register("name", { required: true })}
+                                />
+                                {errors.name && <span className='text-danger'>Required</span>}
+                                <br />
+                                username
+                                <br />
+                                <input
+                                    type="text"
+                                    name="username"
+                                    id="username"
+                                    {...register("username", { required: true })}
+                                />
+                                {errors.username && <span className='text-danger'>Required</span>}
+                                <br />
+                                Email
+                                <br />
+                                <input
+                                    type="email"
+                                    name="email"
+                                    id="email"
+                                    {...register("email", { required: true })}
+                                />
+                                {errors.email && <span className='text-danger'>Required</span>}
+                                <br />
+                                Location
+                                <br />
+                                <input
+                                    type="text"
+                                    name="location"
+                                    id="location"
+                                    {...register("location", { required: true })}
+                                />
+                                {errors.location && <span className='text-danger'>Required</span>}
+                                <br />
+                                Department
+                                <br />
+                                <select name="department" id="" {...register("department", { required: true })}>
+                                    {
+                                        departmentList ?
+                                            departmentList.map((department, key) => {
+                                                return (
+                                                    <option key={key} value={department.name}>{department.name}</option>
+                                                )
+                                            }) : <option>Loading...</option>
+                                    }
+                                </select>
+                                {errors.department && <span className='text-danger'>Required</span>}
+                                <br />
+                                password
+                                <br />
+                                <input
+                                    type="password"
+                                    name="password"
+                                    id="password"
+                                    {...register("password", { required: true })}
+                                />
+                                {errors.password && <span className='text-danger'>Required</span>}
+                                <br />
+                                <input type="submit" value="Submit" data-bs-dismiss="modal" />
+                                <ToastContainer />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+
+    )
 }

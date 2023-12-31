@@ -21,37 +21,45 @@ export default function Login() {
         }, 1000);
       })
       .catch(err => {
-        toast.update(login_status, { render: err.response.data.message, type: "error", isLoading: false });
+        toast.update(login_status, {
+          render: err.response != undefined
+            ? err.response.data.message
+            : 'Something went wrong',
+          type: "error", isLoading: false
+        });
       })
-
   }
+
   return (
-    <div>
-      <form method="post" onSubmit={handleSubmit(handleLoginForm)}>
-        username
-        <br />
-        <input
-          type="text"
-          name="username"
-          id="username"
-          {...register("username", { required: true })}
-        />
-        {errors.username && <span className='text-danger'>Required</span>}
-        <br />
-        password
-        <br />
-        <input
-          type="password"
-          name="password"
-          id="password"
-          {...register("password", { required: true })}
-        />
-        {errors.password && <span className='text-danger'>Required</span>}
-        <br />
-        <input type="submit" value="Submit" />
-        <ToastContainer />
-      </form>
-      <Link to={'/signup'}>Signup</Link>
+    <div style={{ display: 'flex', justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <div>
+        <h4>Login </h4>
+        <form method="post" onSubmit={handleSubmit(handleLoginForm)}>
+          username
+          <br />
+          <input
+            type="text"
+            name="username"
+            id="username"
+            {...register("username", { required: true })}
+          />
+          {errors.username && <span className='text-danger'>Required</span>}
+          <br />
+          password
+          <br />
+          <input
+            type="password"
+            name="password"
+            id="password"
+            {...register("password", { required: true })}
+          />
+          {errors.password && <span className='text-danger'>Required</span>}
+          <br />
+          <input type="submit" value="Submit" />
+          <ToastContainer />
+        </form>
+        <Link to={'/signup'}>Signup</Link>
+      </div>
     </div>
   )
 }

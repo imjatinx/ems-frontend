@@ -5,49 +5,54 @@ import Login from './Pages/Login';
 import Signup from './Pages/Signup';
 import Employee from './Pages/Employee';
 import Manager from './Pages/Manager';
-import ProtectedRoute from './Pages/RouteProtection/ProtectedRoute';
+import ProtectedRoute from './Pages/ProtectedRoute';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import ExploreUser from './Pages/ExploreUser';
+import Department from './Pages/Department';
 
 function App() {
-  const navigate = useNavigate();
-  const [profile, setProfile] = useState('');
 
-  const handleSession = () => {
-    toast.success('Session Expired! Please login again.');
-    navigate('/login')
-  }
 
-  
-  const fetchProfile = () => {
-    const accessToken = localStorage.getItem('accessToken') ? localStorage.getItem('accessToken') : handleSession();
-    const url = "http://localhost:3001/user/profile";
-    if (accessToken) {
-      axios.get(url, { headers: { Authorization: `${accessToken}` } })
-        .then(res => {
-          setProfile(res.data.profile)
-        })
-        .catch(err => {
-          console.log(err);
-        })
-      }
-    }
-    
-    useEffect(() => {
-      fetchProfile()
-      console.log(profile);
-    }, [])
-    
   return (
     <Routes>
-      <Route path='/signup' Component={Signup} />
-      <Route path='/login' Component={Login} />
-      <Route path='/employee' Component={Employee} />
-      <Route path='/manager' Component={Manager} />
-      <Route path='/' Component={<Home />} />
+      <Route path='/signup' element={<Signup />} />
+      <Route path='/login' element={<Login />} />
+
+      <Route path='/' element={
+        <ProtectedRoute>
+          <Home />
+        </ProtectedRoute>
+      } />
+
+      <Route path='/employee' element={
+        <ProtectedRoute managerRoute={true}>
+          <Employee />
+        </ProtectedRoute>
+      } />
+
+      <Route path='/manager' element={
+        <ProtectedRoute>
+          <Manager />
+        </ProtectedRoute>
+      } />
+
+      <Route path='/user/:id' element={
+        <ProtectedRoute>
+          <ExploreUser />
+        </ProtectedRoute>
+      } />
+
+      <Route path='/department' element={
+        <ProtectedRoute>
+          <Department />
+        </ProtectedRoute>
+      } />
+
+
     </Routes>
   );
 }
