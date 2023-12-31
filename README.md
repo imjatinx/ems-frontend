@@ -17,6 +17,21 @@ To start the nodejs Server, run:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
+## Libraries used in this project
+
+### reactjs, react-hook-form, react-icons, bootstrap, react-router-dom, react-toastify (for alert messages) and axios.
+
+## Techniques used in this project
+
+#### 1. User login/signed up with their credentials, they will redirected to the profile/home page.
+#### 2. without login, users can not visit protected routes (used custom component to verify token and fetch profile).
+#### 3. if the login user's role is employee, they will see only 1 tab for profile information.
+#### 4. if the login user's role is manager, they will see only 3 more tab other than profile such as Employees, Managers, Departments.
+#### 5. A user with role manager is created at the time of project building from directly database.
+#### 6. then managers can operate employees, other managers and departments
+#### 7. but the current loggedin (self) manager can not delete and update their associated department and role.
+#### 8. if the employee role user wants to reach out to the manager routes from url bar then the system will automatically logged out and end the session.
+
 ## Usages
 ### Configuration:
 
