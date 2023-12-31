@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios'
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-import { Link, useNavigate } from 'react-router-dom'
-import Layout from './Layout';
+import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
+import { MdOutlineDelete } from "react-icons/md";
+import { IoMdAdd } from "react-icons/io";
 
 export default function Department() {
     const navigate = useNavigate()
@@ -37,7 +38,8 @@ export default function Department() {
 
     useEffect(() => { fetchDepartments() }, [])
 
-    const { register, handleSubmit, formState: { errors }, setValue, resetField } = useForm()
+    const { register, handleSubmit, formState: { errors }, resetField } = useForm()
+    const { register: register2, formState: { errors: errors2 }, setValue, handleSubmit: handleSubmit2, } = useForm();
     // Create a New Department
     const handleCreateDept = async (data) => {
         const accessToken = localStorage.getItem('accessToken') ? localStorage.getItem('accessToken') : handleSession();
@@ -93,10 +95,9 @@ export default function Department() {
     const handleUpdate = (data) => {
         const accessToken = localStorage.getItem('accessToken') ? localStorage.getItem('accessToken') : handleSession();
         const url = `http://localhost:3001/dept/${data.id}`;
-        axios.put(url,{name: data.name}, { headers: { Authorization: `${accessToken}` } })
+        axios.put(url, { name: data.name }, { headers: { Authorization: `${accessToken}` } })
             .then(res => {
                 // Only accept 200 responses
-                console.log(res);
                 toast.success(res.data.message);
                 fetchDepartments();
             })
@@ -115,48 +116,59 @@ export default function Department() {
     return (
         <>
             <div>
-                <h4>
-                    List Here Department
-                </h4>
-                <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createDepartmentModal">
-                    Create Department
-                </button>
-                <table border={1} width={'100%'}>
-                    <thead>
-                        <tr><th>Name</th><th>Action</th></tr>
-                    </thead>
-                    <tbody>
-                        {
-                            departmentList != ""
-                                ? departmentList.map((department, key) => {
-                                    return (
-                                        <tr key={key}>
-                                            <td>{department.name}</td>
-                                            <td>
-                                                <button type="button" className="btn btn-primary mx-2"
-                                                    onClick={() => {
-                                                        handleDelete(department._id)
-                                                    }}>Delete</button>
+                <div className="row d-flex justify-content-between">
+                    <div className="col-md-6">
+                        <h4>
+                            All Department <IoMdAdd style={{ cursor: 'pointer' }} data-bs-toggle="modal" data-bs-target="#createDepartmentModal"
+                                onClick={() => {
+                                    fetchDepartments()
+                                }} />
+                        </h4>
+                    </div>
+                </div>
+                <div className="table-responsive">
+                    <table className='table table-striped table-bordered mt-3'>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                departmentList != ""
+                                    ? departmentList.map((department, key) => {
+                                        return (
+                                            <tr key={key}>
+                                                <td>{department.name}</td>
+                                                <td>
 
-                                                <button
-                                                    type="button"
-                                                    id={department._id}
-                                                    data-name={department.name}
-                                                    className="btn btn-primary"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#updateDepartmentModal"
-                                                    onClick={(e) => {
-                                                        handleUpdateModal(e)
-                                                    }}>Edit</button>
-                                            </td>
-                                        </tr>
-                                    )
-                                })
-                                : <tr className='text-center'><td colSpan={4}>Loading...</td></tr>
-                        }
-                    </tbody>
-                </table>
-                <ToastContainer />
+                                                    <button
+                                                        type="button"
+                                                        id={department._id}
+                                                        data-name={department.name}
+                                                        className="btn btn-primary"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#updateDepartmentModal"
+                                                        onClick={(e) => {
+                                                            handleUpdateModal(e)
+                                                        }}>Edit</button>
+                                                </td>
+                                                <td>
+                                                    <MdOutlineDelete className='fs-3' style={{ cursor: 'pointer' }}
+                                                        onClick={() => {
+                                                            handleDelete(department._id)
+                                                        }} />
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                                    : <tr className='text-center'><td colSpan={3}>No Department loaded...</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {/* Create Department Modal Here */}
@@ -169,17 +181,16 @@ export default function Department() {
                         </div>
                         <div className="modal-body">
                             <form onSubmit={handleSubmit(handleCreateDept)}>
-                                Name
-                                <br />
-                                <input
-                                    type="text"
-                                    name="name"
-                                    id="name"
-                                    {...register("name", { required: true })}
-                                />
-                                {errors.name && <span className='text-danger'>Required</span>}
-                                <br />
-                                <input type="submit" value="Submit" data-bs-dismiss="modal" />
+                                <div className="row">
+                                    <div className="col-md-12 mb-1">
+                                        <input type="text" className="form-control" placeholder="Name"
+                                            {...register("name", { required: true })} />
+                                        {errors.name && <span className='text-danger'>Required</span>}
+                                    </div>
+                                </div>
+                                <div className="d-grid gap-2">
+                                    <button className="btn btn-primary" type="submit" data-bs-dismiss="modal">Create Department</button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -195,19 +206,18 @@ export default function Department() {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            <form onSubmit={handleSubmit(handleUpdate)}>
-                                <input type="hidden" id='updateDeptId' {...register("id", { required: true })} />
-                                Name
-                                <br />
-                                <input
-                                    type="text"
-                                    name="name"
-                                    id="name"
-                                    {...register("name", { required: true })}
-                                />
-                                {errors.name && <span className='text-danger'>Required</span>}
-                                <br />
-                                <input type="submit" value="Submit" data-bs-dismiss="modal" />
+                            <form onSubmit={handleSubmit2(handleUpdate)}>
+                                <input type="hidden" {...register2("id", { required: true })} />
+                                <div className="row">
+                                    <div className="col-md-12 mb-1">
+                                        <input type="text" className="form-control" placeholder="Name"
+                                            {...register2("name", { required: true })} />
+                                        {errors2.name && <span className='text-danger'>Required</span>}
+                                    </div>
+                                </div>
+                                <div className="d-grid gap-2">
+                                    <button className="btn btn-primary" type="submit" data-bs-dismiss="modal">Update Department</button>
+                                </div>
                             </form>
                         </div>
                     </div>

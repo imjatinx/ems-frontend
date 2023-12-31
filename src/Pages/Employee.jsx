@@ -3,8 +3,11 @@ import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from 'react-router-dom'
-import Layout from './Layout';
 import { useForm } from 'react-hook-form'
+import { RxEyeOpen } from "react-icons/rx";
+import { MdOutlineDelete } from "react-icons/md";
+import { IoMdAdd } from "react-icons/io";
+import { TbFilterDown, TbFilterUp } from "react-icons/tb";
 
 export default function Employee() {
     const navigate = useNavigate()
@@ -35,6 +38,7 @@ export default function Employee() {
         }
         fetchEmployees(sort, emp)
     }
+
     const fetchEmployees = (sort = '', emp = '') => {
         const accessToken = localStorage.getItem('accessToken') ? localStorage.getItem('accessToken') : handleSession();
         let url = '';
@@ -137,63 +141,72 @@ export default function Employee() {
     return (
         <>
             <div>
-                <h4>
-                    List Here Employee
-                </h4>
-                <input type="button" value="filter location"
-                    onClick={(e) => {
-                        setLocationFilter(!locationFilter)
-                        handleFilter({ sort: true });
-                    }} />
-                <input type="button" value="filter employee"
-                    onClick={(e) => {
-                        setEmpFilter(!empFilter)
-                        handleFilter({ emp: true });
-                    }} />
-                <button type="button" className="btn btn-primary" data-bs-toggle="modal"
-                    onClick={() => {
-                        fetchDepartments()
-                    }}
-                    data-bs-target="#createEmployeeModal">
-                    Create Employee
-                </button>
-                <table border={1} width={'100%'}>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Location</th>
-                            <th>Department</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            employeeList != ""
-                                ? employeeList.map((employee, key) => {
-                                    return (
-                                        <tr key={key}>
-                                            <td>{employee.name}</td>
-                                            <td>{employee.username}</td>
-                                            <td>{employee.email}</td>
-                                            <td>{employee.location}</td>
-                                            <td>{employee.department.name}</td>
-                                            <td>
-                                                <Link to={`/user/${employee._id}`}>Explore</Link>
-                                                <button onClick={() => {
-                                                    handleDeleteEmp(employee._id);
-                                                }}>Delete</button>
-                                            </td>
-                                        </tr>
-                                    )
-                                })
-                                : <tr className='text-center'><td colSpan={6}>No Employee...</td></tr>
-                        }
-                    </tbody>
-                </table>
+                <div className="row d-flex justify-content-between">
+                    <div className="col-md-6">
+                        <h4>
+                            All Employees <IoMdAdd style={{ cursor: 'pointer' }} data-bs-toggle="modal" data-bs-target="#createEmployeeModal"
+                                onClick={() => {
+                                    fetchDepartments()
+                                }} />
+                        </h4>
+                    </div>
+                    <div className="col-md-6 d-flex justify-content-around align-items-center">
+                        <span style={{ cursor: 'pointer' }} onClick={(e) => {
+                            setLocationFilter(!locationFilter)
+                            handleFilter({ sort: true });
+                        }}>Location {locationFilter ? <TbFilterUp /> : <TbFilterDown />}</span>
+
+                        <span style={{ cursor: 'pointer' }} onClick={(e) => {
+                            setEmpFilter(!empFilter)
+                            handleFilter({ emp: true });
+                        }}>Name {empFilter ? <TbFilterUp /> : <TbFilterDown />}</span>
+                    </div>
+                </div>
+                <div className="table-responsive">
+                    <table className='table table-striped table-bordered mt-3'>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Location</th>
+                                <th>Department</th>
+                                <th>Exlpore</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                employeeList != ""
+                                    ? employeeList.map((employee, key) => {
+                                        return (
+                                            <tr key={key}>
+                                                <td>{employee.name}</td>
+                                                <td>{employee.username}</td>
+                                                <td>{employee.email}</td>
+                                                <td>{employee.location}</td>
+                                                <td>{employee.department.name}</td>
+                                                <td>
+                                                    <Link to={`/user/${employee._id}`}>
+                                                        <RxEyeOpen className='fs-3' />
+                                                    </Link>
+                                                </td>
+                                                <td>
+                                                    <MdOutlineDelete className='fs-3' style={{ cursor: 'pointer' }} onClick={() => {
+                                                        handleDeleteEmp(employee._id);
+                                                    }} />
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                                    : <tr className='text-center'><td colSpan={7}>No Employee loaded...</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
+            <ToastContainer />
             {/* Create Employee Modal Here */}
             <div className="modal fade" id="createEmployeeModal" tabIndex="-1" aria-labelledby="createEmployeeModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
@@ -205,72 +218,55 @@ export default function Employee() {
                         <div className="modal-body">
                             <form onSubmit={handleSubmit(handleCreateEmp)}>
                                 <input type="hidden" name="role" id="role" value={'employee'} {...register("role", { required: true })} />
-                                name
-                                <br />
-                                <input
-                                    type="text"
-                                    name="name"
-                                    id="name"
-                                    {...register("name", { required: true })}
-                                />
-                                {errors.name && <span className='text-danger'>Required</span>}
-                                <br />
-                                username
-                                <br />
-                                <input
-                                    type="text"
-                                    name="username"
-                                    id="username"
-                                    {...register("username", { required: true })}
-                                />
-                                {errors.username && <span className='text-danger'>Required</span>}
-                                <br />
-                                Email
-                                <br />
-                                <input
-                                    type="email"
-                                    name="email"
-                                    id="email"
-                                    {...register("email", { required: true })}
-                                />
-                                {errors.email && <span className='text-danger'>Required</span>}
-                                <br />
-                                Location
-                                <br />
-                                <input
-                                    type="text"
-                                    name="location"
-                                    id="location"
-                                    {...register("location", { required: true })}
-                                />
-                                {errors.location && <span className='text-danger'>Required</span>}
-                                <br />
-                                Department
-                                <br />
-                                <select name="department" id="" {...register("department", { required: true })}>
-                                    {
-                                        departmentList ?
-                                            departmentList.map((department, key) => {
-                                                return (
-                                                    <option key={key} value={department.name}>{department.name}</option>
-                                                )
-                                            }) : <option>Loading...</option>
-                                    }
-                                </select>
-                                {errors.department && <span className='text-danger'>Required</span>}
-                                <br />
-                                password
-                                <br />
-                                <input
-                                    type="password"
-                                    name="password"
-                                    id="password"
-                                    {...register("password", { required: true })}
-                                />
-                                {errors.password && <span className='text-danger'>Required</span>}
-                                <br />
-                                <input type="submit" value="Submit" data-bs-dismiss="modal" />
-                                <ToastContainer />
+                                <div className="row">
+                                    <div className="col-md-6 mb-1">
+                                        <input type="text" className="form-control" placeholder="Name"
+                                            {...register("name", { required: true })} />
+                                        {errors.name && <span className='text-danger'>Required</span>}
+                                    </div>
+                                    <div className="col-md-6 mb-1">
+                                        <input type="text" className="form-control" placeholder="Username"
+                                            {...register("username", { required: true })} />
+                                        {errors.username && <span className='text-danger'>Required</span>}
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-6 mb-1">
+                                        <input type="email" className="form-control" placeholder="Email"
+                                            {...register("email", { required: true })} />
+                                        {errors.email && <span className='text-danger'>Required</span>}
+                                    </div>
+                                    <div className="col-md-6 mb-1">
+                                        <input type="password" className="form-control" placeholder="Password"
+                                            {...register("password", { required: true })} />
+                                        {errors.password && <span className='text-danger'>Required</span>}
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12 mb-1">
+                                        <select className="form-select" {...register("department", { required: true })}>
+                                            {
+                                                departmentList ?
+                                                    departmentList.map((department, key) => {
+                                                        return (
+                                                            <option key={key} value={department.name}>{department.name}</option>
+                                                        )
+                                                    }) : <option>Loading...</option>
+                                            }
+                                        </select>
+                                        {errors.location && <span className='text-danger'>Required</span>}
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12 mb-1">
+                                        <input type="text" className="form-control" placeholder="Location"
+                                            {...register("location", { required: true })} />
+                                        {errors.location && <span className='text-danger'>Required</span>}
+                                    </div>
+                                </div>
+                                <div className="d-grid gap-2">
+                                    <button className="btn btn-primary" type="submit" data-bs-dismiss="modal">Create Employee</button>
+                                </div>
                             </form>
                         </div>
                     </div>

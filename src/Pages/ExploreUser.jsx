@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-import { Link, useNavigate } from 'react-router-dom'
-import Layout from './Layout';
+import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 
@@ -112,46 +111,56 @@ export default function ExploreUser() {
 
     return (
         <div>
-            <h4>Explore Profile</h4 >
+            <h4>Explore Profile, {user != '' ? user.username : 'Profile content not loaded...'}</h4 >
             {
                 user != '' ?
                     <>
-                        <li>Username: {user.username}</li>
                         <form onSubmit={handleSubmit(handleUpdateUser)}>
                             <input type="hidden" name="" {...register("username", { required: true })} />
-                            <br />
-                            Name: <input type="text" {...register("name", { required: true })} />
-                            <br />
-                            Role :
-                            <br />
-                            <select name="role" id="role" {...register("role", { required: true })}>
-                                <option value="employee">Employee</option>
-                                <option value="manager">Manager</option>
-                            </select>
-                            {errors.role && <span className='text-danger'>Required</span>}
-                            <br />
-                            Email : <input type="email" {...register("email", { required: true })} />
-                            <br />
-                            {errors.email && <span className='text-danger'>Required</span>}
-                            Location : <input type="text" {...register("location", { required: true })} />
-                            <br />
-                            {errors.location && <span className='text-danger'>Required</span>}
-                            <br />
-                            Department :
-                            <br />
-                            <select name="department" id="department" {...register("department", { required: true })}>
-                                {
-                                    departmentList ?
-                                        departmentList.map((department, key) => {
-                                            return (
-                                                <option key={key} value={department.name}>{department.name}</option>
-                                            )
-                                        }) : <option>Loading...</option>
-                                }
-                            </select>
-                            {errors.department && <span className='text-danger'>Required</span>}
-                            <br />
-                            <input type="submit" value="update" />
+                            <div className="row">
+                                <div className="col-md-6 mb-1">
+                                    <input type="text" className="form-control" placeholder="Name"
+                                        {...register("name", { required: true })} />
+                                    {errors.name && <span className='text-danger'>Required</span>}
+                                </div>
+                                <div className="col-md-6 mb-1">
+                                    <input type="email" className="form-control" placeholder="Email"
+                                        {...register("email", { required: true })} />
+                                    {errors.email && <span className='text-danger'>Required</span>}
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-6 mb-1">
+                                    <select className="form-select" {...register("department", { required: true })}>
+                                        {
+                                            departmentList ?
+                                                departmentList.map((department, key) => {
+                                                    return (
+                                                        <option key={key} value={department.name}>{department.name}</option>
+                                                    )
+                                                }) : <option>Loading...</option>
+                                        }
+                                    </select>
+                                    {errors.location && <span className='text-danger'>Required</span>}
+                                </div>
+                                <div className="col-md-6 mb-1">
+                                    <select className="form-select" {...register("role", { required: true })}>
+                                        <option value="employee">Employee</option>
+                                        <option value="manager">Manager</option>
+                                    </select>
+                                    {errors.role && <span className='text-danger'>Required</span>}
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-12 mb-1">
+                                    <input type="text" className="form-control" placeholder="Location"
+                                        {...register("location", { required: true })} />
+                                    {errors.location && <span className='text-danger'>Required</span>}
+                                </div>
+                            </div>
+                            <div className="d-grid gap-2">
+                                <button className="btn btn-primary" type="submit">Update Profile</button>
+                            </div>
                         </form>
                     </> : ''
             }

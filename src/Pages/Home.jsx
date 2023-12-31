@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-import { Link, useNavigate } from 'react-router-dom'
-import Layout from './Layout';
+import { useNavigate } from 'react-router-dom'
 
 export default function Home() {
     const navigate = useNavigate()
@@ -39,18 +38,39 @@ export default function Home() {
 
     return (
         <>
-            Your Profile
-            {
-                profile != '' ?
-                    <>
-                        <li>Name: {profile.name}</li>
-                        <li>Username: {profile.username}</li>
-                        <li>Role: {profile.role}</li>
-                        <li>Email: {profile.email}</li>
-                        <li>Location: {profile.location}</li>
-                        <li>Department: {!profile.department?'No Department':profile.department.name}</li>
-                    </> : ''
-            }
+
+            <div className="row">
+                {
+                    profile != '' ?
+                        <>
+                            <div className="col-md-12 text-center fs-1">
+                                Welcome, {profile.name}
+                            </div>
+                            <div className="col-md-6 mx-auto">
+                                <p className='text-justify'>
+                                    <span className='fw-bold'>BIO:</span>  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vel dolorum delectus sed, fuga atque praesentium harum error.
+                                </p>
+                                <div className='text-justify d-flex justify-content-between'>
+                                    <p><span className='fw-bold'>Username:</span> {profile.username}</p>
+                                    <p><span className='fw-bold'>Email:</span> {profile.email}</p>
+                                </div>
+                                <div className='text-justify d-flex justify-content-between'>
+                                    <p><span className='fw-bold'>Role:</span> {profile.role}</p>
+                                    <p><span className='fw-bold'>Location:</span>Reporting at {profile.location} office</p>
+                                </div>
+                                <div className='text-justify d-flex justify-content-between'>
+                                    <p>
+                                        <span className='fw-bold'>Department:</span> {!profile.department ? 'No Department' : profile.department.name}
+                                    </p>
+                                </div>
+
+                            </div>
+                        </> :
+                        <div className="col-md-12 border text-center fs-1">
+                            Profile content not loaded...
+                        </div>
+                }
+            </div>
             <ToastContainer />
         </>
     )

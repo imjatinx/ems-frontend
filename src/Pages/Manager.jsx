@@ -3,8 +3,10 @@ import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from 'react-router-dom'
-import Layout from './Layout';
 import { useForm } from 'react-hook-form'
+import { RxEyeOpen } from "react-icons/rx";
+import { MdOutlineDelete } from "react-icons/md";
+import { IoMdAdd } from "react-icons/io";
 
 export default function Manager() {
     const navigate = useNavigate()
@@ -109,58 +111,61 @@ export default function Manager() {
     return (
         <>
             <div>
-                <h4>
-                    List Here Manager
-                </h4>
-                <form method="post">
-                    <input type="search" name="search" placeholder='search' />
-                    <input type="text" name='location' placeholder='location' />
-                    <input type="submit" value="filter" />
-                </form>
-                <button type="button" className="btn btn-primary" data-bs-toggle="modal"
-                    onClick={() => {
-                        fetchDepartments()
-                    }}
-                    data-bs-target="#createManagerModal">
-                    Create Manager
-                </button>
-                <table border={1} width={'100%'}>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Location</th>
-                            <th>Department</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            managerList != ""
-                                ? managerList.map((manager, key) => {
-                                    return (
-                                        <tr key={key}>
-                                            <td>{manager.name}</td>
-                                            <td>{manager.username}</td>
-                                            <td>{manager.email}</td>
-                                            <td>{manager.location}</td>
-                                            <td>{manager.department.name}</td>
-                                            <td>
-                                                <Link to={`/user/${manager._id}`}>Explore</Link>
-                                                <button onClick={() => {
-                                                    handleDeleteManager(manager._id);
-                                                }}>Delete</button>
-                                            </td>
-                                        </tr>
-                                    )
-                                })
-                                : <tr className='text-center'><td colSpan={6}>No Manager...</td></tr>
-                        }
-                    </tbody>
-                </table>
+                <div className="row d-flex justify-content-between">
+                    <div className="col-md-12">
+                        <h4>
+                            All Managers <IoMdAdd style={{ cursor: 'pointer' }} data-bs-toggle="modal" data-bs-target="#createManagerModal"
+                                onClick={() => {
+                                    fetchDepartments()
+                                }} />
+                        </h4>
+                    </div>
+                </div>
+                <div className="table-responsive">
+                    <table className='table table-striped table-bordered mt-3'>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Location</th>
+                                <th>Department</th>
+                                <th>Exlpore</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                managerList != ""
+                                    ? managerList.map((manager, key) => {
+                                        return (
+                                            <tr key={key}>
+                                                <td>{manager.name}</td>
+                                                <td>{manager.username}</td>
+                                                <td>{manager.email}</td>
+                                                <td>{manager.location}</td>
+                                                <td>{manager.department.name}</td>
+                                                <td>
+                                                    <Link to={`/user/${manager._id}`}>
+                                                        <RxEyeOpen className='fs-3' />
+                                                    </Link>
+                                                </td>
+                                                <td>
+                                                    <MdOutlineDelete className='fs-3' style={{ cursor: 'pointer' }} onClick={() => {
+                                                        handleDeleteManager(manager._id);
+                                                    }} />
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                                    : <tr className='text-center'><td colSpan={7}>No Manager loaded...</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
+            <ToastContainer />
             {/* Create Manager Modal Here */}
             <div className="modal fade" id="createManagerModal" tabIndex="-1" aria-labelledby="createManagerModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
@@ -170,75 +175,57 @@ export default function Manager() {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            <form method="post" onSubmit={handleSubmit(handleCreateManager)}>
-                                name
-                                <br />
-                                <input
-                                    type="text"
-                                    name="name"
-                                    id="name"
-                                    {...register("name", { required: true })}
-                                />
-                                {errors.name && <span className='text-danger'>Required</span>}
-                                <br />
-                                username
-                                <br />
-                                <input
-                                    type="text"
-                                    name="username"
-                                    id="username"
-                                    {...register("username", { required: true })}
-                                />
-                                <input type="hidden" name="role" id="role" value={'manager'} {...register("role", { required: true })}
-                                />
-                                {errors.username && <span className='text-danger'>Required</span>}
-                                <br />
-                                Email
-                                <br />
-                                <input
-                                    type="email"
-                                    name="email"
-                                    id="email"
-                                    {...register("email", { required: true })}
-                                />
-                                {errors.email && <span className='text-danger'>Required</span>}
-                                <br />
-                                Location
-                                <br />
-                                <input
-                                    type="text"
-                                    name="location"
-                                    id="location"
-                                    {...register("location", { required: true })}
-                                />
-                                {errors.location && <span className='text-danger'>Required</span>}
-                                <br />
-                                Department
-                                <br />
-                                <select name="department" id="" {...register("department", { required: true })}>
-                                    {
-                                        departmentList ?
-                                            departmentList.map((department, key) => {
-                                                return (
-                                                    <option key={key} value={department.name}>{department.name}</option>
-                                                )
-                                            }) : <option>Loading...</option>
-                                    }
-                                </select>
-                                {errors.department && <span className='text-danger'>Required</span>}
-                                <br />
-                                password
-                                <br />
-                                <input
-                                    type="password"
-                                    name="password"
-                                    id="password"
-                                    {...register("password", { required: true })}
-                                />
-                                {errors.password && <span className='text-danger'>Required</span>}
-                                <br />
-                                <input type="submit" value="Submit" data-bs-dismiss="modal" />
-                                <ToastContainer />
+                            <form onSubmit={handleSubmit(handleCreateManager)}>
+                                <input type="hidden" name="role" id="role" value={'manager'} {...register("role", { required: true })} />
+                                <div className="row">
+                                    <div className="col-md-6 mb-1">
+                                        <input type="text" className="form-control" placeholder="Name"
+                                            {...register("name", { required: true })} />
+                                        {errors.name && <span className='text-danger'>Required</span>}
+                                    </div>
+                                    <div className="col-md-6 mb-1">
+                                        <input type="text" className="form-control" placeholder="Username"
+                                            {...register("username", { required: true })} />
+                                        {errors.username && <span className='text-danger'>Required</span>}
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-6 mb-1">
+                                        <input type="email" className="form-control" placeholder="Email"
+                                            {...register("email", { required: true })} />
+                                        {errors.email && <span className='text-danger'>Required</span>}
+                                    </div>
+                                    <div className="col-md-6 mb-1">
+                                        <input type="password" className="form-control" placeholder="Password"
+                                            {...register("password", { required: true })} />
+                                        {errors.password && <span className='text-danger'>Required</span>}
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12 mb-1">
+                                        <select className="form-select" {...register("department", { required: true })}>
+                                            {
+                                                departmentList ?
+                                                    departmentList.map((department, key) => {
+                                                        return (
+                                                            <option key={key} value={department.name}>{department.name}</option>
+                                                        )
+                                                    }) : <option>Loading...</option>
+                                            }
+                                        </select>
+                                        {errors.location && <span className='text-danger'>Required</span>}
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12 mb-1">
+                                        <input type="text" className="form-control" placeholder="Location"
+                                            {...register("location", { required: true })} />
+                                        {errors.location && <span className='text-danger'>Required</span>}
+                                    </div>
+                                </div>
+                                <div className="d-grid gap-2">
+                                    <button className="btn btn-primary" type="submit" data-bs-dismiss="modal">Create Employee</button>
+                                </div>
                             </form>
                         </div>
                     </div>

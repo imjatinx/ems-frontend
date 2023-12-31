@@ -30,65 +30,55 @@ export default function Signup() {
             })
     }
     return (
-        <div style={{ display: 'flex', justifyContent: "center", alignItems: "center", height: "100vh" }}>
-            <div>
-                <h4>Signup</h4>
-                <form method="post" onSubmit={handleSubmit(handleSignUpForm)}>
-                    name
-                    <br />
-                    <input
-                        type="text"
-                        name="name"
-                        id="name"
-                        {...register("name", { required: true })}
-                    />
-                    {errors.name && <span className='text-danger'>Required</span>}
-                    <br />
-                    username
-                    <br />
-                    <input
-                        type="text"
-                        name="username"
-                        id="username"
-                        {...register("username", { required: true })}
-                    />
-                    {errors.username && <span className='text-danger'>Required</span>}
-                    <br />
-                    email
-                    <br />
-                    <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        {...register("email", { required: true })}
-                    />
-                    {errors.email && <span className='text-danger'>Required</span>}
-                    <br />
-                    Location
-                    <br />
-                    <input
-                        type="text"
-                        name="location"
-                        id="location"
-                        {...register("location", { required: true })}
-                    />
-                    {errors.location && <span className='text-danger'>Required</span>}
-                    <br />
-                    password
-                    <br />
-                    <input
-                        type="password"
-                        name="password"
-                        id="password"
-                        {...register("password", { required: true })}
-                    />
-                    {errors.password && <span className='text-danger'>Required</span>}
-                    <br />
-                    <input type="submit" value="Submit" />
-                    <ToastContainer />
-                </form>
-                <Link to={'/login'}>Login</Link>
+        <>
+            <div style={{ display: 'flex', justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                <div className="card" style={{ width: "25rem" }}>
+                    <div className="card-body">
+                        <h5 className="card-title text-center">Create an Account</h5>
+                        <hr />
+                        <form onSubmit={handleSubmit(handleSignUpForm)}>
+                            <div className="row">
+                                <div className="col-md-6 mb-1">
+                                    <input type="text" className="form-control" placeholder="Name"
+                                        {...register("name", { required: true })} />
+                                    {errors.name && <span className='text-danger'>Required</span>}
+                                </div>
+                                <div className="col-md-6 mb-1">
+                                    <input type="text" className="form-control" placeholder="Username"
+                                        {...register("username", { required: true })} />
+                                    {errors.username && <span className='text-danger'>Required</span>}
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-6 mb-1">
+                                    <input type="email" className="form-control" placeholder="Email"
+                                        {...register("email", { required: true })} />
+                                    {errors.email && <span className='text-danger'>Required</span>}
+                                </div>
+                                <div className="col-md-6 mb-1">
+                                    <input type="password" className="form-control" placeholder="Password"
+                                        {...register("password", { required: true })} />
+                                    {errors.password && <span className='text-danger'>Required</span>}
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-12 mb-1">
+                                    <input type="text" className="form-control" placeholder="Location"
+                                        {...register("location", { required: true })} />
+                                    {errors.location && <span className='text-danger'>Required</span>}
+                                </div>
+                            </div>
+                            <div className="d-grid gap-2">
+                                <button className="btn btn-primary" type="submit">Create</button>
+                            </div>
+                            <div className="d-grid gap-2 my-3">
+                                <Link className="text-dark" to={'/login'}>Already have an account?</Link>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </div>
+            <ToastContainer />
+        </>
     )
 }

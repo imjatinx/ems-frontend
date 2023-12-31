@@ -1,15 +1,12 @@
 import './App.css';
 import Home from './Pages/Home';
-import Layout from './Pages/Layout';
 import Login from './Pages/Login';
 import Signup from './Pages/Signup';
 import Employee from './Pages/Employee';
 import Manager from './Pages/Manager';
 import ProtectedRoute from './Pages/ProtectedRoute';
-import { Route, Routes, useNavigate } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
-import axios from 'axios'
-import { ToastContainer, toast } from 'react-toastify';
+import { Route, Routes } from 'react-router-dom';
+import React, {  } from 'react';
 import "react-toastify/dist/ReactToastify.css";
 import ExploreUser from './Pages/ExploreUser';
 import Department from './Pages/Department';
