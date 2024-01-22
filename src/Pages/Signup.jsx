@@ -13,6 +13,7 @@ export default function Signup() {
     const handleSignUpForm = async (data) => {
         const sign_up_status = toast.loading("Please wait...")
         const url = "http://localhost:3001/auth/signup";
+        console.log(data);
         axios.post(url, data)
             .then(res => {
                 toast.update(sign_up_status, { render: res.data.message, type: "success", isLoading: false });
@@ -22,7 +23,7 @@ export default function Signup() {
             })
             .catch(err => {
                 toast.update(sign_up_status, {
-                    render: err.response != undefined
+                    render: err.response !== undefined
                         ? err.response.data.message
                         : 'Something went wrong',
                     type: "error", isLoading: false
@@ -68,6 +69,23 @@ export default function Signup() {
                                     {errors.location && <span className='text-danger'>Required</span>}
                                 </div>
                             </div>
+                            <div className="row">
+                                <div className="col-md-6 mb-1">
+                                    <div className="form-check">
+                                        <input className="form-check-input" type="radio" name="role" id="role1" value="employee" checked
+                                        {...register("role", { required: true })}/>
+                                        <label className="form-check-label" htmlFor="role1">Employee</label>
+                                    </div>
+                                </div>
+                                <div className="col-md-6 mb-1">
+                                    <div className="form-check">
+                                        <input className="form-check-input" type="radio" name="role" id="role2" value="manager"
+                                        {...register("role", { required: true })}/>
+                                        <label className="form-check-label" htmlFor="role2">Manager</label>
+                                    </div>
+                                </div>
+                                {errors.role && <span className='text-danger'>Required</span>}
+                            </div>
                             <div className="d-grid gap-2">
                                 <button className="btn btn-primary" type="submit">Create</button>
                             </div>
@@ -78,7 +96,7 @@ export default function Signup() {
                     </div>
                 </div>
             </div>
-            <ToastContainer />
+            <ToastContainer autoClose={1000}/>
         </>
     )
 }

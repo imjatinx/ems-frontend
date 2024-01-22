@@ -34,13 +34,14 @@ export default function ProtectedRoute({ children }) {
         }
     }
 
-    useEffect(() => { fetchProfile() }, [])
+    useEffect(() => { 
+        fetchProfile() }, [])
 
     return (
         <>
-            <Layout userRole={profile != '' ? profile.role : ''} >
+            <Layout userRole={profile !== '' ? profile.role : ''} >
                 {children}
-                <ToastContainer />
+                <ToastContainer autoClose={1000}/>
             </Layout>
         </>
     )

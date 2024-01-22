@@ -26,7 +26,7 @@ export default function Navbar({ userRole }) {
                 <NavLink className="nav-link" aria-current="page" to="/">Profile</NavLink>
               </li>
               {
-                userRole == 'manager' ?
+                userRole === 'manager' ?
                   <>
                     <li className="nav-item">
                       <NavLink className="nav-link" aria-current="page" to='/employee'>Employees</NavLink>
@@ -45,7 +45,7 @@ export default function Navbar({ userRole }) {
           </div>
         </div>
       </nav>
-      <ToastContainer/>
+      <ToastContainer autoClose={1000}/>
     </>
   )
 }

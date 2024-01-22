@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 
 export default function ExploreUser() {
-    const { register, handleSubmit, formState: { errors }, setValue, resetField } = useForm({
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm({
         defaultValues: {
             username: '',
             name: '',
@@ -23,7 +23,7 @@ export default function ExploreUser() {
     const [departmentList, setDepartmentList] = useState('')
 
     function handleSession() {
-        toast.error('Session expired, please login123')
+        toast.error('Session expired, please login')
         localStorage.removeItem("accessToken");
 
         setTimeout(() => {
@@ -87,7 +87,6 @@ export default function ExploreUser() {
             axios.put(url, data, { headers: { Authorization: `${accessToken}` } })
                 .then(res => {
                     toast.success(res.data.message);
-                    fetchUser()
                 })
                 .catch(err => {
                     if (err.response) {
@@ -111,9 +110,9 @@ export default function ExploreUser() {
 
     return (
         <div>
-            <h4>Explore Profile, {user != '' ? user.username : 'Profile content not loaded...'}</h4 >
+            <h4>Explore Profile, {user !== '' ? user.username : 'Profile content not loaded...'}</h4 >
             {
-                user != '' ?
+                user !== '' ?
                     <>
                         <form onSubmit={handleSubmit(handleUpdateUser)}>
                             <input type="hidden" name="" {...register("username", { required: true })} />
@@ -164,7 +163,7 @@ export default function ExploreUser() {
                         </form>
                     </> : ''
             }
-            <ToastContainer />
+            <ToastContainer autoClose={1000} />
         </div>
     )
 }

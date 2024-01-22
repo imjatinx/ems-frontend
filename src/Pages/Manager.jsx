@@ -136,7 +136,7 @@ export default function Manager() {
                         </thead>
                         <tbody>
                             {
-                                managerList != ""
+                                managerList !== ""
                                     ? managerList.map((manager, key) => {
                                         return (
                                             <tr key={key}>
@@ -165,7 +165,7 @@ export default function Manager() {
                 </div>
             </div>
 
-            <ToastContainer />
+            <ToastContainer autoClose={1000}/>
             {/* Create Manager Modal Here */}
             <div className="modal fade" id="createManagerModal" tabIndex="-1" aria-labelledby="createManagerModalLabel" aria-hidden="true">
                 <div className="modal-dialog">

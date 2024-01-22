@@ -22,7 +22,7 @@ export default function Login() {
             })
             .catch(err => {
                 toast.update(login_status, {
-                    render: err.response != undefined
+                    render: err.response !== undefined
                         ? err.response.data.message
                         : 'Something went wrong',
                     type: "error", isLoading: false
@@ -60,7 +60,7 @@ export default function Login() {
                     </div>
                 </div>
             </div>
-            <ToastContainer />
+            <ToastContainer autoClose={1000}/>
         </>
     )
 }

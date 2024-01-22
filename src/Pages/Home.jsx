@@ -23,7 +23,6 @@ export default function Home() {
             axios.get(url, { headers: { Authorization: `${accessToken}` } })
                 .then(res => {
                     setProfile(res.data.profile)
-                    toast.success('Profile fetched successfully.')
                 })
                 .catch(err => {
                     handleSession();
@@ -41,7 +40,7 @@ export default function Home() {
 
             <div className="row">
                 {
-                    profile != '' ?
+                    profile !== '' ?
                         <>
                             <div className="col-md-12 text-center fs-1">
                                 Welcome, {profile.name}
@@ -71,7 +70,7 @@ export default function Home() {
                         </div>
                 }
             </div>
-            <ToastContainer />
+            <ToastContainer autoClose={1000}/>
         </>
     )
 }

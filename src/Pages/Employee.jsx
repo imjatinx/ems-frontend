@@ -30,11 +30,11 @@ export default function Employee() {
     const handleFilter = (filter = '') => {
         let sort = ''
         let emp = ''
-        if (filter.sort != undefined) {
-            if (locationFilter == true) { sort = 'desc' } else { sort = 'asc' }
+        if (filter.sort !== undefined) {
+            if (locationFilter === true) { sort = 'desc' } else { sort = 'asc' }
         }
-        if (filter.emp != undefined) {
-            if (empFilter == true) { emp = 'desc' } else { emp = 'asc' }
+        if (filter.emp !== undefined) {
+            if (empFilter === true) { emp = 'desc' } else { emp = 'asc' }
         }
         fetchEmployees(sort, emp)
     }
@@ -42,15 +42,15 @@ export default function Employee() {
     const fetchEmployees = (sort = '', emp = '') => {
         const accessToken = localStorage.getItem('accessToken') ? localStorage.getItem('accessToken') : handleSession();
         let url = '';
-        if (sort != '') {
-            url = `http://localhost:3001/user/employee${sort == '' ? "" : `?sort=${sort}`}`;
+        if (sort !== '') {
+            url = `http://localhost:3001/user/employee${sort === '' ? "" : `?sort=${sort}`}`;
         }
 
-        if (emp != '') {
+        if (emp !== '') {
             url = `http://localhost:3001/user/employee?emp=${emp}`;
         }
 
-        if (sort == '' && emp == '') {
+        if (sort === '' && emp === '') {
             url = `http://localhost:3001/user/employee`;
         }
         if (accessToken) {
@@ -107,7 +107,7 @@ export default function Employee() {
         resetField("username");
         resetField("email");
         resetField("location");
-        resetField("department");
+        // resetField("department");
         resetField("password");
     }
 
@@ -177,7 +177,7 @@ export default function Employee() {
                         </thead>
                         <tbody>
                             {
-                                employeeList != ""
+                                employeeList !== ""
                                     ? employeeList.map((employee, key) => {
                                         return (
                                             <tr key={key}>
@@ -206,7 +206,7 @@ export default function Employee() {
                 </div>
             </div>
 
-            <ToastContainer />
+            <ToastContainer autoClose={1000} />
             {/* Create Employee Modal Here */}
             <div className="modal fade" id="createEmployeeModal" tabIndex="-1" aria-labelledby="createEmployeeModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
@@ -265,7 +265,7 @@ export default function Employee() {
                                     </div>
                                 </div>
                                 <div className="d-grid gap-2">
-                                    <button className="btn btn-primary" type="submit" data-bs-dismiss="modal">Create Employee</button>
+                                    <button className="btn btn-primary" type="submit">Create Employee</button>
                                 </div>
                             </form>
                         </div>
